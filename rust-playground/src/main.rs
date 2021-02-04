@@ -1,21 +1,9 @@
-#[allow(dead_code)]
-#[derive(Clone, Copy, Debug)]
-struct Foo<'a> {
-    x: &'a i32,
-}
+mod restaurant;
 
-fn create_comparator(a: &str) -> impl Fn(&str) -> bool + 'static {
-    move |b: &str| {
-        return b == "b";
-    }
-}
+use restaurant::back_of_house::cook;
+use restaurant::serve;
 
 fn main() {
-    let temp = String::from("a");
-    let a = temp.as_str();
-    let comparator = create_comparator(a);
-    let b = "b";
-    let result = comparator(b);
-    println!("Result: {}", result);
+    cook();
+    serve();
 }
-
