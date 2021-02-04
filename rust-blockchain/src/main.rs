@@ -29,14 +29,6 @@ struct BlockChain {
     pending_transactions: Vec<Transaction>,
 }
 
-/*impl fmt::Debug for BlockChain {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_list()
-            .entries(self.chain.borrow().iter())
-            .finish()
-    }
-}*/
-
 impl BlockChain {
     fn generate_genesis_block() -> Block {
         let utc: DateTime<Utc> = Utc::now();
