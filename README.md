@@ -1,1 +1,2 @@
-# effective-rust
+# Effective Rust
+Rust playground repository.
