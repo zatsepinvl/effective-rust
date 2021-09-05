@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "primitives"
+name = "r1-helloworld"
 version = "0.1.0"
