@@ -1,3 +1,5 @@
+use std::mem;
+
 #[allow(dead_code)]
 fn main() {
     structures();
@@ -26,7 +28,8 @@ fn structures() {
     // Destructure a tuple struct
     let Pair(integer, decimal) = pair;
 
-    println!("pair contains {:?} and {:?}", integer, decimal);
+    println!("Pair contains {:?} and {:?}", integer, decimal);
+    println!("Pair occupies {} bytes", mem::size_of_val(&pair));
 }
 
 fn enums() {
