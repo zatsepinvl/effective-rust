@@ -1,12 +1,13 @@
 use std::collections::hash_map::DefaultHasher;
+use std::fmt::{Display, Formatter, Pointer};
 use std::hash::{Hash, Hasher};
+
 use chrono::prelude::*;
 
 #[derive(Debug, Clone, Hash)]
 pub struct Transaction {
-    pub payload: String
+    pub payload: String,
 }
-
 
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -19,7 +20,7 @@ pub struct Block {
 
 #[derive(Debug)]
 pub struct BlockChainError {
-    pub message: String
+    pub message: String,
 }
 
 #[derive(Debug)]
@@ -30,11 +31,16 @@ pub struct BlockChain {
 
 impl BlockChain {
     pub fn generate_genesis_block() -> Block {
-        let utc: DateTime<Utc> = Utc::now();
+        let index = 0;
+        let timestamp: i64 = Utc::now().timestamp();
+        let ref mut hasher = DefaultHasher::new();
+        timestamp.hash(hasher);
+        index.hash(hasher);
+        let hash = hasher.finish();
         return Block {
             index: 0,
-            timestamp: utc.timestamp(),
-            hash: 0,
+            timestamp,
+            hash,
             transactions: vec![],
             prev_block_hash: 0,
         };
@@ -47,53 +53,75 @@ impl BlockChain {
         }
     }
 
-    pub fn get_last_block(&self) -> Block {
+    pub fn latest_block(&self) -> &Block {
         let block_optional = self.chain.last();
-        block_optional.unwrap().clone()
+        block_optional.unwrap()
     }
 
     pub fn send_transaction(&mut self, transaction: Transaction) {
         self.pending_transactions.push(transaction)
     }
 
-    //Mine new block with all pending transactions in it
-    pub fn mine(&mut self) -> Block {
-        let prev_block = self.get_last_block();
+    // Produce new block with all pending transactions in it
+    pub fn produce_block(&mut self) -> Block {
+        let prev_block = self.latest_block();
+        let prev_block_index = prev_block.index + 1;
+        let prev_block_hash = prev_block.hash;
         let transactions = &mut vec![];
         for transaction in self.pending_transactions.drain(..) {
             transactions.push(transaction)
         }
-        let new_block = self.generate_block(prev_block.index + 1, prev_block.hash, transactions.to_owned());
-        self.add_block(new_block.clone());
-        new_block
+        let next_block = self.generate_block(prev_block_index, prev_block_hash, transactions.to_owned());
+        self.add_block(next_block.clone());
+        next_block
     }
 
-    //private
     fn generate_block(&self, index: u64, prev_block_hash: u64, transactions: Vec<Transaction>) -> Block {
         let utc: DateTime<Utc> = Utc::now();
         let timestamp = utc.timestamp();
-        let mut hasher = DefaultHasher::new();
-        index.hash(&mut hasher);
-        timestamp.hash(&mut hasher);
-        transactions.iter().for_each(|tr| tr.hash(&mut hasher));
-        prev_block_hash.hash(&mut hasher);
+        let ref mut hasher = DefaultHasher::new();
+        index.hash(hasher);
+        timestamp.hash(hasher);
+        transactions.iter().for_each(|tr| tr.hash(hasher));
+        prev_block_hash.hash(hasher);
         let hash = hasher.finish();
         return Block {
             index,
             timestamp,
             hash,
             transactions,
-            prev_block_hash: 0,
+            prev_block_hash,
         };
     }
 
-    //private
     fn add_block(&mut self, new_block: Block) {
-        let last_block = self.get_last_block();
+        let last_block = self.latest_block();
         if new_block.prev_block_hash == last_block.hash {
             self.chain.push(new_block);
         } else {
             panic!("Block should refer to the latest block in the chain")
         }
+    }
+}
+
+impl Display for Block {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Block #{} | hash: {} | timestamp: {} | txs: {} | prev block: {} |",
+               self.index,
+               self.hash,
+               self.timestamp,
+               self.transactions.len(),
+               self.prev_block_hash
+        )
+    }
+}
+
+impl Display for BlockChain {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Blockchain: [\n")?;
+        for block in self.chain.iter() {
+            write!(f, "\t{}\n", block)?;
+        }
+        write!(f, "]")
     }
 }
