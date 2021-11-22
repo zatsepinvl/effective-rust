@@ -6,17 +6,17 @@ version = 3
 name = "app"
 version = "0.1.0"
 dependencies = [
- "appcore",
+ "app-core",
  "plugin",
 ]
 
 [[package]]
-name = "appcore"
+name = "app-core"
 version = "0.1.0"
 
 [[package]]
 name = "plugin"
 version = "0.1.0"
 dependencies = [
- "appcore",
+ "app-core",
 ]
