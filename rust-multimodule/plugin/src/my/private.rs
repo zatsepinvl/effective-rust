@@ -1,2 +1,4 @@
 #[allow(dead_code)]
-fn private_fn() {}
+pub fn my_private_fn() {
+    println!("private_fn")
+}

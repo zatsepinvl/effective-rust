@@ -16,6 +16,6 @@ impl<T: Config> Plugin<T> {
         let context = T::Runtime::context();
         T::Log::info(&context.version);
         private_fn();
-        my::public::public_fn();
+        my::public::my_public_fn();
     }
 }
