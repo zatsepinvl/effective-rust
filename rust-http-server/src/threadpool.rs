@@ -1,8 +1,8 @@
+use std::sync::Arc;
+use std::sync::mpsc;
+use std::sync::Mutex;
 use std::thread;
 use std::thread::Thread;
-use std::sync::mpsc;
-use std::sync::Arc;
-use std::sync::Mutex;
 
 pub struct ThreadPool {
     workers: Vec<Worker>,

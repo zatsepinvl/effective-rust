@@ -1,11 +1,14 @@
+use std::{fs, thread};
 #[allow(dead_code)]
 use std::io::prelude::*;
-use std::net::{TcpListener, TcpStream};
 use std::io::Read;
-use std::{fs, thread};
-use threadpool::ThreadPool;
+use std::net::{TcpListener, TcpStream};
 use std::ptr::null;
 use std::sync::Arc;
+
+use threadpool::ThreadPool;
+
+mod threadpool;
 
 fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind("127.0.0.1:8080")?;
@@ -29,7 +32,7 @@ fn handle_connection(mut stream: TcpStream) -> std::io::Result<()> {
     let mut buffer = [0; 1024];
     stream.read(&mut buffer).unwrap();
     //println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
-    let  index_html = String::from(
+    let index_html = String::from(
         r#"<!DOCTYPE html><html lang="en">
             <head>
                 <meta charset="UTF-8">
