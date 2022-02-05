@@ -9,3 +9,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[features]
+default = ["feature_mod"] # required for 13_attributes to include feature_mod into final compilation
+feature_mod = []
+
+
+

@@ -1,31 +1,35 @@
-use restaurant::back_of_house::cook;
-use restaurant::serve;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 
-mod restaurant;
+#[derive(Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl Point {
+    fn up(&mut self) {
+        self.y += 1;
+    }
+}
 
 fn main() {
-    let s1 = String::from("hello");
-    {
-        let s2 = &s1;
-        println!("{}", first_word(s2));
-    }
-    println!("{}", s1);
-}
+    let mut point = Point { x: 1, y: 2 };
+    let counter = Arc::new(point);
+    let mut handles = vec![];
 
-fn length(s: &String) -> usize {
-    return s.len();
-}
+    for _ in 0..10 {
+        let mut counter = counter.clone();
+        let handle = thread::spawn(move || {
 
-fn first_word(s: &str) -> &str {
-    let bytes = s.as_bytes();
-
-    s.len();
-
-    for (i, &item) in bytes.iter().enumerate() {
-        if item == b' ' {
-            return &s[0..i];
-        }
+        });
+        handles.push(handle);
     }
 
-    &s[..]
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {:?}", point);
 }
