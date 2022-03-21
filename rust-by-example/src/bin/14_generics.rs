@@ -5,6 +5,8 @@ fn main() {
     params_and_struct();
     traits();
     newtype_idiom();
+    default_type_param();
+    associated_types();
 }
 
 fn params_and_struct() {
@@ -86,7 +88,62 @@ fn newtype_idiom() {
     println!("{:?}", years);
 }
 
-fn associated_types() {}
+fn default_type_param() {
+    #[derive(Debug)]
+    struct Bar {}
+
+    trait Foo<T = Bar>
+        where T: Debug {
+        fn log(arg: &T);
+    }
+
+    impl Foo for Bar {
+        fn log(arg: &Bar) {
+            println!("{:?}", arg);
+        }
+    }
+
+    let bar = Bar {};
+    Bar::log(&bar);
+}
+
+fn associated_types() {
+    mod module {
+        #[derive(Debug)]
+        pub struct Foo(i32);
+
+        pub struct Bar {
+            count: i32,
+            current: i32,
+        }
+
+        impl Bar {
+            pub fn new(count: i32) -> Bar {
+                Bar { count, current: 0 }
+            }
+        }
+
+        impl Iterator for Bar {
+            type Item = Foo;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                if self.current < self.count {
+                    let temp = self.current;
+                    self.current += 1;
+                    Some(Foo(temp))
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
+    let bar = module::Bar::new(3);
+
+    for i in bar {
+        println!("{:?}", i);
+    }
+}
 
 
 
