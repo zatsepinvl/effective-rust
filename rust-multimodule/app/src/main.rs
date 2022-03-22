@@ -3,27 +3,27 @@ use app_core::{Config, Context};
 
 const CONTEXT: Context = Context { version: "123" };
 
-struct App;
+struct Runtime {}
 
-impl app_core::Runtime for App {
+impl app_core::ContextProvider for Runtime {
     fn context() -> &'static Context {
         return &CONTEXT;
     }
 }
 
-impl app_core::Log for App {
+impl app_core::Log for Runtime {
     fn info(obj: &dyn Debug) {
         println!("[INFO] {:?}", obj);
     }
 }
 
-impl Config for App {
-    type Runtime = Self;
+impl Config for Runtime {
+    type ContextProvider = Self;
     type Log = Self;
 }
 
-impl plugin::Config for App {}
+impl plugin::Config for Runtime {}
 
 fn main() {
-    plugin::Plugin::<App>::run();
+    plugin::Plugin::<Runtime>::run();
 }

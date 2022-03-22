@@ -4,7 +4,7 @@ pub struct Context {
     pub version: &'static str,
 }
 
-pub trait Runtime {
+pub trait ContextProvider {
     fn context() -> &'static Context;
 }
 
@@ -13,6 +13,6 @@ pub trait Log {
 }
 
 pub trait Config {
-    type Runtime: Runtime;
+    type ContextProvider: ContextProvider;
     type Log: Log;
 }

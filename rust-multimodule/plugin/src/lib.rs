@@ -1,5 +1,5 @@
 use app_core::Log;
-use app_core::Runtime;
+use app_core::ContextProvider;
 
 mod my;
 
@@ -13,8 +13,9 @@ fn private_fn() {
 
 impl<T: Config> Plugin<T> {
     pub fn run() {
-        let context = T::Runtime::context();
+        let context = T::ContextProvider::context();
         T::Log::info(&context.version);
+
         private_fn();
         my::public::my_public_fn();
     }
