@@ -45,10 +45,32 @@ fn ownership_and_moves() {
     let a = Box::new(5i32);
     println!("a contains: {}", a);
     // *Move* `a` into `b`
-    let b = a;
+    let _b = a;
     // Error! `a` can no longer access the data, because it no longer owns the
     // heap memory
     //println!("a contains: {}", a);
+
+    fn partial_moves() {
+        #[derive(Debug)]
+        struct Person {
+            name: String,
+            age: Box<u8>,
+        }
+
+        let person = Person { name: String::from("John"), age: Box::new(12) };
+        // `name` is moved out of person, but `age` is referenced
+        let Person { name, ref age } = person;
+
+        println!("The person's age is {}", age);
+        println!("The person's name is {}", name);
+
+        // Error! borrow of partially moved value: `person` partial move occurs
+        //println!("The person struct is {:?}", person);
+
+        // `person` cannot be used but `person.age` can be used as it is not moved
+        println!("The person's age from person struct is {}", person.age);
+    }
+    partial_moves();
 }
 
 fn borrowing() {
