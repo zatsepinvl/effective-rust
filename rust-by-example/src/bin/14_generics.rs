@@ -7,6 +7,7 @@ fn main() {
     newtype_idiom();
     default_type_param();
     associated_types();
+    phantom_type_parameter();
 }
 
 fn params_and_struct() {
@@ -145,5 +146,19 @@ fn associated_types() {
     }
 }
 
+
+fn phantom_type_parameter() {
+    use std::marker::PhantomData;
+
+    // A phantom tuple struct which is generic over `A` with hidden parameter `B`.
+    // Storage is allocated for generic type `A`, but not for `B`.
+    // Therefore, `B` cannot be used in computations.
+    #[derive(PartialEq)] // Allow equality test for this type.
+    struct PhantomTuple<A, B>(A, PhantomData<B>);
+
+    let _tuple_f32:PhantomTuple<char, f32> = PhantomTuple('Q', PhantomData);
+    let _tuple_f64: PhantomTuple<char, f64> = PhantomTuple('Q', PhantomData);
+
+}
 
 
