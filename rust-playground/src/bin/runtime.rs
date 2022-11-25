@@ -20,7 +20,7 @@ fn main() {
 }
 
 
-trait Logger {
+pub trait Logger {
     fn log();
 }
 
